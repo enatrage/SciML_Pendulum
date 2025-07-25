@@ -45,7 +45,7 @@ class SpectralConvolution1D(nn.Module):
     """
     
     def __init__(self, in_channels, out_channels, modes):
-        super(SpectralConvolution1D, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels 
         self.out_channels = out_channels

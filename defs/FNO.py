@@ -18,7 +18,7 @@ from helper_defs.fno_layers import *
 class FNO1D(nn.Module):
 
     def __init__(self, cfg_p, cfg_q, cfg_fourierblock):
-        super(FNO1D, self).__init__()
+        super().__init__()
 
         # Initialize P Network (elevator)
         self.p_network = MLP(cfg_mlp= cfg_p)

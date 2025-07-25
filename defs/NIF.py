@@ -14,7 +14,7 @@ class NIF_Pointwise(nn.Module):
     # This NIF model is a redifinition of the older one, here the latent space is parsed and then each parse is pointwise multiplied with the hidden layers pre-activation
 
     def __init__(self, cfg_shape_net, cfg_param_net):
-        super(NIF_Pointwise, self).__init__()
+        super().__init__()
 
         # Initialize shape network parameters
         self.cfg_shape_net = cfg_shape_net

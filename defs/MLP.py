@@ -22,7 +22,7 @@ Here, we define a simple MLP class
 class MLP(nn.Module):
 
     def __init__(self, cfg_mlp):
-        super(MLP, self).__init__()
+        super().__init__()
 
         # Initialize MLP parameters
         self.i_dim = cfg_mlp['input_dim']
