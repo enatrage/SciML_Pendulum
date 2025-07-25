@@ -1,3 +1,5 @@
+# trial
+
 from torch.utils.data import Dataset, DataLoader
 import torch
 import random
@@ -54,9 +56,9 @@ class Dampened_Oscillator(Dataset):
             self.system_coeff_matrix = torch.tensor(self.system_coeff_matrix, dtype=torch.float32)
 
         else: 
-            return ValueError(f'Unknown system combination type: {self.system_type}')
+            print(f'Unknown system combination type: {self.system_type}')
         
-        if self.initial_type == 'basiccomp': # Randomly pick combinations
+        if self.initial_type == 'basiccomb': # Randomly pick combinations
 
             assert cfg_dampo['initial_n'] is not None, 'Specify sample amount for this generation type for init conds.'
 
@@ -66,7 +68,7 @@ class Dampened_Oscillator(Dataset):
 
             self.initial_cond_matrix = []
 
-            for _ in range(self.system_n):
+            for _ in range(self.initial_n):
 
                 row = [
                     random.choice(self.x0_list),
@@ -84,7 +86,7 @@ class Dampened_Oscillator(Dataset):
             self.initial_cond_matrix = torch.tensor(self.initial_cond_matrix, dtype=torch.float32)
 
         else: 
-            return ValueError(f'Unknown system combination type: {self.initial_type}')
+            print(f'Unknown system combination type: {self.initial_type}')
         
         # Now that we have the matrices with combinations generated, we will solve the systems. And find the x values for each cell in t_list
 
@@ -93,7 +95,7 @@ class Dampened_Oscillator(Dataset):
         del self.system_coeff_matrix, self.initial_cond_matrix # Clear memory
 
     @staticmethod
-    def _solve_oscillator_rhs(y, m, c, k):
+    def _solve_oscillator_rhs(t, y, m, c, k):
         x, v = y
         dxdt = v
         dvdt = -(c/m)*v -(k/m)*x
@@ -114,6 +116,7 @@ class Dampened_Oscillator(Dataset):
         idx = 0
         for i in range(system_coeff_matrix.shape[0]):
             for j in range(init_cond_matrix.shape[0]):
+
                 m, c, k = system_coeff_matrix[i]
                 x0, v0 = init_cond_matrix[j]
 
@@ -128,6 +131,8 @@ class Dampened_Oscillator(Dataset):
 
                 solutions[idx] = sol.y[0]
                 combined_params[idx] = [x0, v0, m, c, k]
+                
+                idx = idx+1
             
         return torch.tensor(solutions, dtype=torch.float32), torch.tensor(combined_params, dtype=torch.float32)
 
@@ -137,10 +142,4 @@ class Dampened_Oscillator(Dataset):
     def __getitem__(self, idx):
         return self.solutions[idx], self.combined_cond[idx]
 
-
-cfg_dampo = {
-    'm_list': np.linspace(-5, 5, 25), 'c_list': np.linspace(-5, 5, 25), 'k_list': np.linspace(-5, 5, 25), 'system_type': 'fullcomb',
-    'x0_list': np.linspace(-5, 5, 25), 'y0_list': np.linspace(-5, 5, 25), 'initial_type': 'basiccomb', 'initial_n': 50, 
-    't_list': np.linspace(0, 10, 50)
-}
 
